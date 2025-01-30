@@ -1,0 +1,45 @@
+name: Build and Publish
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Verify .NET Framework 4.8
+      run: |
+        if (!(Test-Path "C:\Windows\Microsoft.NET\Framework\v4.0.30319")) {
+          Write-Error ".NET Framework 4.8 is not installed"
+          exit 1
+        }
+
+    - name: Restore dependencies
+      run: dotnet restore
+
+    - name: Build
+      run: dotnet build --configuration Release --no-restore
+
+    - name: Test
+      run: dotnet test --no-restore --verbosity normal
+
+    - name: Pack
+      run: dotnet pack --configuration Release --no-restore --include-symbols --include-source
+
+  publish:
+    needs: build
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Publish to NuGet
+      env:
+        NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+      run: dotnet nuget push '**/*.nupkg' --source https://nuget.pkg.github.com/RenPsg/index.json --api-key $NUGET_API_KEY
