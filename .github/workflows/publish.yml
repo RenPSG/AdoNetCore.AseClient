@@ -12,12 +12,10 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Verify .NET Framework 4.8
-      run: |
-        if (!(Test-Path "C:\Windows\Microsoft.NET\Framework\v4.0.30319")) {
-          Write-Error ".NET Framework 4.8 is not installed"
-          exit 1
-        }
+    - name: Setup .NET 8 and .NET 9
+      uses: actions/setup-dotnet@v2
+      with:
+        dotnet-version: '8.x, 9.x'
 
     - name: Restore dependencies
       run: dotnet restore
