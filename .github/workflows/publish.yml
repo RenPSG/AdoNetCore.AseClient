@@ -22,14 +22,29 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore
 
+    - name: Print working directory
+      run: pwd
+
     - name: Build
       run: dotnet build --configuration Release --no-restore
+
+    - name: Print working directory
+      run: pwd
+
+    - name: List current directory before pack
+      run: dir
 
     - name: Pack
       run: dotnet pack --configuration Release --no-restore --include-symbols --include-source --output ./artifacts
       
+    - name: Wait for file system to update
+      run: timeout 5
+
+    - name: Print working directory
+      run: pwd
+      
     - name: List artifacts directory
-      run: dir artifacts
+      run: dir ./artifacts
 
     - name: Publish to GitHub Packages
       run: dotnet nuget push './artifacts/*.nupkg' --source https://nuget.pkg.github.com/RenPsg/index.json --api-key ${{ secrets.GITHUB_TOKEN }}
