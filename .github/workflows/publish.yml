@@ -48,5 +48,11 @@ jobs:
     - name: List artifacts directory
       run: dir ./artifacts
 
+    - name: Change to artifacts directory
+      run: cd artifacts
+
+    - name: List current directory after cd
+      run: dir
+
     - name: Publish to GitHub Packages
-      run: dotnet nuget push "./artifacts/*.nupkg" --source https://nuget.pkg.github.com/RenPsg/index.json --api-key ${{ secrets.GITHUB_TOKEN }}
+      run: dotnet nuget push "*.nupkg" --source https://nuget.pkg.github.com/RenPsg/index.json --api-key ${{ secrets.GITHUB_TOKEN }}
