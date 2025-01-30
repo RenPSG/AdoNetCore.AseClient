@@ -38,7 +38,8 @@ jobs:
       run: dotnet pack --configuration Release --no-restore --include-symbols --include-source --output ./artifacts
       
     - name: Wait for file system to update
-      run: timeout 5
+      shell: pwsh
+      run: Start-Sleep -Seconds 5
 
     - name: Print working directory
       run: pwd
