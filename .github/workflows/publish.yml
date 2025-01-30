@@ -55,4 +55,8 @@ jobs:
       run: dir
 
     - name: Publish to GitHub Packages
-      run: dotnet nuget push "*.nupkg" --source https://nuget.pkg.github.com/RenPsg/index.json --api-key ${{ secrets.GITHUB_TOKEN }}
+      shell: pwsh
+      run: |
+        Get-ChildItem -Path ./artifacts -Filter *.nupkg | ForEach-Object {
+          dotnet nuget push $_.FullName --source https://nuget.pkg.github.com/RenPsg/index.json --api-key ${{ secrets.GITHUB_TOKEN }}
+        }
