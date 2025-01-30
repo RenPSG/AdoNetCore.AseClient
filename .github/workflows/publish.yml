@@ -36,7 +36,7 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Publish to NuGet
+    - name: Publish to GitHub Packages
       env:
-        NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
-      run: dotnet nuget push '**/*.nupkg' --source https://nuget.pkg.github.com/RenPsg/index.json --api-key $NUGET_API_KEY
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: dotnet nuget push '**/*.nupkg' --source https://nuget.pkg.github.com/RenPsg/index.json --api-key $GITHUB_TOKEN
