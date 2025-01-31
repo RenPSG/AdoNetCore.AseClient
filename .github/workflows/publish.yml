@@ -57,6 +57,6 @@ jobs:
     - name: Publish to GitHub Packages
       shell: pwsh
       run: |
-        Get-ChildItem -Path ./artifacts -Filter *.nupkg | ForEach-Object {
-          dotnet nuget push $_.FullName --source https://nuget.pkg.github.com/RenPsg/index.json --api-key ${{ secrets.GITHUB_TOKEN }}
+        Get-ChildItem -Path ./artifacts -Filter *.nupkg | where { $_.Name -notmatch "\.symbols\.nupkg$" } | ForEach-Object {
+          dotnet nuget push $_.FullName --source https://nuget.pkg.github.com/RenPsg/index.json --api-key ${{ secrets.GITHUB_TOKEN } --skip-duplicate}
         }
