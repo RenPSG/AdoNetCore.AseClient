@@ -9,22 +9,19 @@ jobs:
     runs-on: windows-latest
     strategy:
       matrix:
-        dotnet-version: ['8.x', '9.x']
+        dotnet-version: ['8.x', '9.x', '4.8']
 
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Setup .NET 8 and .NET 9
+    - name: Setup .NET
       uses: actions/setup-dotnet@v2
       with:
         dotnet-version: ${{ matrix.dotnet-version }}
 
     - name: Restore dependencies
       run: dotnet restore
-
-    - name: Print working directory
-      run: pwd
 
     - name: Build
       run: dotnet build --configuration Release --no-restore
