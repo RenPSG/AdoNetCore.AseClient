@@ -29,30 +29,12 @@ jobs:
     - name: Build
       run: dotnet build --configuration Release --no-restore
 
-    - name: Print working directory
-      run: pwd
-
-    - name: List current directory before pack
-      run: dir
-
     - name: Pack
       run: dotnet pack --configuration Release --no-restore --include-symbols --include-source --output ./artifacts
       
     - name: Wait for file system to update
       shell: pwsh
       run: Start-Sleep -Seconds 5
-
-    - name: Print working directory
-      run: pwd
-      
-    - name: List artifacts directory
-      run: dir ./artifacts
-
-    - name: Change to artifacts directory
-      run: cd artifacts
-
-    - name: List current directory after cd
-      run: dir
 
     - name: Publish to GitHub Packages
       shell: pwsh
