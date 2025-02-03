@@ -1,0 +1,47 @@
+name: Build and Publish
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+jobs:
+  build:
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        dotnet-version: ['8.x', '9.x', '4.8']
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Setup .NET Core and .NET 5+
+      if: matrix.dotnet-version != '4.8'
+      uses: actions/setup-dotnet@v2
+      with:
+        dotnet-version: ${{ matrix.dotnet-version }}
+
+    - name: Setup .NET Framework 4.8
+      if: matrix.dotnet-version == '4.8'
+      run: |
+        choco install netfx-4.8-devpack
+
+    - name: Restore dependencies
+      run: dotnet restore
+
+    - name: Build
+      run: dotnet build --configuration Release --no-restore
+
+    - name: Pack
+      run: dotnet pack --configuration Release --no-restore --include-symbols --include-source --output ./artifacts
+      
+    - name: Wait for file system to update
+      shell: pwsh
+      run: Start-Sleep -Seconds 5
+
+    - name: Publish to GitHub Packages
+      shell: pwsh
+      run: |
+        Get-ChildItem -Path ./artifacts -Filter *.nupkg | where { $_.Name -notmatch "\.symbols\.nupkg$" } | ForEach-Object {
+          dotnet nuget push $_.FullName --source https://nuget.pkg.github.com/RenPsg/index.json --api-key ${{ secrets.GITHUB_TOKEN }} --skip-duplicate
+        }
